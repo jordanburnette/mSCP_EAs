@@ -2,7 +2,7 @@
 <extensionAttribute>
 <displayName>mSCP - Failed Results Count</displayName>
 <displayInCategory>Operating System</displayInCategory>
-<dataType>string</dataType>
+<dataType>integer</dataType>
 <description>Displays the number of compliance controls that failed.</description>
 <scriptContentsMac>#!/bin/sh
 
