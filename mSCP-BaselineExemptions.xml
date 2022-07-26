@@ -19,7 +19,7 @@ baselineVersion=$(ls -l /Library/Preferences | /usr/bin/grep 'org.*.audit.plist'
 auditfile="/Library/Managed Preferences/${baselineVersion}"
 /usr/bin/plutil -convert xml1 "${auditfile}"
 
-if [[ $(/usr/bin/grep "&lt;key&gt;finding&lt;/result&gt;" "${auditfile}" 2> /dev/null) ]] ; then
+if [[ $(/usr/bin/grep "&lt;key&gt;finding&lt;/key&gt;" "${auditfile}" 2> /dev/null) ]] ; then
 	result="$(/usr/bin/defaults read "${auditfile}" 2> /dev/null | /usr/bin/grep -B3 "exempt = 1" | /usr/bin/grep "{" | /usr/bin/cut -d '"' -f2 | tail -n +2)"
 else
 	result=""
