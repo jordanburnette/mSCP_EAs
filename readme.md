@@ -1,6 +1,6 @@
 # macOS Security Compliance Extension Attributes
 The following are Extension Attributes (EAs) for use in Jamf Pro when deploying the macOS Security Compliance Project (mSCP).
-![mSCP Jamf EAs](https://github.com/jordanburnette/mSCP_EAs/blob/readmeupdate/mSCP_EA_Sample.png?raw=true)
+![https://github.com/jordanburnette/mSCP_EAs/blob/readmeupdate/mSCP_EA_Sample.png?raw=true](https://github.com/jordanburnette/mSCP_EAs/blob/main/mSCP_EA_Sample.png?raw=true)
 
 ## Contents Include:
 - **mSCP-BaselineVersion.xml** : Lists the name of the baseline that is being run on the computer object (ie. org.cislvl1.audit.plist)
