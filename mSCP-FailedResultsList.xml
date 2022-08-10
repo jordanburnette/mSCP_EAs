@@ -6,27 +6,20 @@
 <description>Displays the list of compliance controls that failed.</description>
 <scriptContentsMac>#!/bin/sh
 ######
+# mSCP-FailedItems.sh
 # Original by Matt Woodruff @ Jamf
-# 
-# Last modified 2022.07.26 by Jordan Burnette
-######
-#
-######
-# INSTRUCTIONS
-# This Jamf Extension Attribute is used in conjunction with the macOS Security Compliance project (mSCP)
-# https://github.com/usnistgov/macos_security
-#
-# Upload the following text into Jamf Pro Extension Attribute section. 
-# 
-# Used to gather the list of failed controls from the compliance audit.
+# Last modified 2022.08.10 by Jordan Burnette
+# https://github.com/jordanburnette/mSCP_EAs
+###### Description
+# Displays a list of failed audit points on the targeted machine
 ######
 
-baselineVersion=$(ls -l /Library/Preferences | /usr/bin/grep 'org.*.audit.plist' | /usr/bin/awk '{print $NF}')
+baselineVersion=$(/bin/ls -l /Library/Preferences | /usr/bin/grep 'org.*.audit.plist' | /usr/bin/awk '{print $NF}')
 auditfile="/Library/Preferences/${baselineVersion}"
 /usr/bin/plutil -convert xml1 "${auditfile}"
 
-if [[ $(/usr/bin/grep "&lt;key&gt;finding&lt;/key&gt;" "${auditfile}" 2> /dev/null) ]] ; then
-	result="$(/usr/bin/defaults read "${auditfile}" 2> /dev/null | /usr/bin/grep -B3 "finding = 1" | /usr/bin/grep "{" | /usr/bin/cut -d '"' -f2)"
+if [[ $(/usr/bin/grep "&lt;key&gt;finding&lt;/key&gt;" "${auditfile}" 2&gt; /dev/null) ]] ; then
+	result="$(/usr/bin/defaults read "${auditfile}" 2&gt; /dev/null | /usr/bin/grep -B3 "finding = 1" | /usr/bin/grep "{" | /usr/bin/cut -d '"' -f2)"
 else
 	result=""
 fi
