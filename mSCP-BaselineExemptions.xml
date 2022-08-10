@@ -3,24 +3,29 @@
 <displayName>mSCP - Baseline Exemptions</displayName>
 <displayInCategory>Operating System</displayInCategory>
 <dataType>string</dataType>
-<description>Lists out any exemptions configured in mSCP</description>
+<description>Displays a list of exempted audit points</description>
+<dataType>string</dataType>
 <scriptContentsMac>#!/bin/sh
 ######
 # mSCP-BaselineExemptions.sh
 # Written by Jordan Burnette (jburnette@vcu.edu)
-# Date Created 2022.03.31
-# Last modified 2022.07.26 by Jordan Burnette
+# Last modified 2022.08.10 by Jordan Burnette
+# https://github.com/jordanburnette/mSCP_EAs
 ###### Description
 # Determines the baseline version being used and lists out any exemptions that are deployed to the machine. 
 ######
 
 baselineVersion=$(ls -l /Library/Preferences | /usr/bin/grep 'org.*.audit.plist' | /usr/bin/awk '{print $NF}')
 
-auditfile="/Library/Managed Preferences/${baselineVersion}"
-/usr/bin/plutil -convert xml1 "${auditfile}"
+auditFile="/Library/Managed Preferences/${baselineVersion}"
+if [[ ! -e "$auditFile" ]];then
+    auditFile="/Library/Preferences/${baselineVersion}"
+fi
 
-if [[ $(/usr/bin/grep "&lt;key&gt;finding&lt;/key&gt;" "${auditfile}" 2> /dev/null) ]] ; then
-	result="$(/usr/bin/defaults read "${auditfile}" 2> /dev/null | /usr/bin/grep -B3 "exempt = 1" | /usr/bin/grep "{" | /usr/bin/cut -d '"' -f2 | tail -n +2)"
+/usr/bin/plutil -convert xml1 "${auditFile}"
+
+if [[ $(/usr/bin/grep "&lt;key&gt;exempt&lt;/key&gt;" "${auditFile}" 2&gt; /dev/null) ]] ; then
+	result="$(/usr/bin/defaults read "${auditFile}" 2&gt; /dev/null | /usr/bin/grep -B3 "exempt = 1" | /usr/bin/grep "{" | /usr/bin/cut -d '"' -f2 | tail -n +2)"
 else
 	result=""
 fi
