@@ -2,19 +2,20 @@
 <extensionAttribute>
 <displayName>mSCP - Baseline Version</displayName>
 <displayInCategory>Operating System</displayInCategory>
+<description>Displays the version of the baseline that is deployed to the system.</description>
 <dataType>string</dataType>
-<description>Displays the name of the baseline file that is being used</description>
 <scriptContentsMac>#!/bin/sh
 ######
 # mSCP-BaselineVersion.sh
 # Written by Jordan Burnette (jburnette@vcu.edu)
-# Last modified 2022.07.26 by Jordan Burnette
+# Last modified 24 Mar 2022 by Jordan Burnette
+# https://github.com/jordanburnette/mSCP_EAs
 ###### Description
 # Lists all items in /Library/Preferences, greps for any plist that starts with org and ends in audit.plist, 
 # then prints the last section of that content as the result for the EA
 ######
 
 result=$(ls -l /Library/Preferences | grep "org.*.audit.plist" | awk '{print $NF}')
-/bin/echo "&lt;result&gt;${result}&lt;/result&gt;"
+/bin/echo "&lt;result&gt;$result&lt;/result&gt;"
 </scriptContentsMac>
 </extensionAttribute>
