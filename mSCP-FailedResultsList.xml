@@ -3,7 +3,7 @@
 <displayName>mSCP - Failed Result List</displayName>
 <displayInCategory>Operating System</displayInCategory>
 <dataType>string</dataType>
-<description>Displays the list of compliance controls that failed.</description>
+<description>Displays a list of compliance controls that failed.</description>
 <scriptContentsMac>#!/bin/sh
 ######
 # mSCP-FailedItems.sh
@@ -11,7 +11,7 @@
 # Last modified 2022.08.10 by Jordan Burnette
 # https://github.com/jordanburnette/mSCP_EAs
 ###### Description
-# Displays the list of compliance controls that failed.
+# Displays a list of compliance controls that failed.
 ######
 
 baselineVersion=$(/bin/ls -l /Library/Preferences | /usr/bin/grep 'org.*.audit.plist' | /usr/bin/awk '{print $NF}')
