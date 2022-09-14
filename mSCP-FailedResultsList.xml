@@ -11,7 +11,7 @@
 # Last modified 2022.08.10 by Jordan Burnette
 # https://github.com/jordanburnette/mSCP_EAs
 ###### Description
-# Displays a list of failed audit points on the targeted machine
+# Displays the list of compliance controls that failed.
 ######
 
 baselineVersion=$(/bin/ls -l /Library/Preferences | /usr/bin/grep 'org.*.audit.plist' | /usr/bin/awk '{print $NF}')
