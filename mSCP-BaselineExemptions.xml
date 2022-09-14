@@ -3,7 +3,7 @@
 <displayName>mSCP - Baseline Exemptions</displayName>
 <displayInCategory>Operating System</displayInCategory>
 <dataType>string</dataType>
-<description>Displays a list of exempted audit points</description>
+<description>Displays a list of exempted compliance controls</description>
 <dataType>string</dataType>
 <scriptContentsMac>#!/bin/sh
 ######
