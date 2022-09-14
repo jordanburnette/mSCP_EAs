@@ -3,7 +3,7 @@
 <displayName>mSCP - Failed Results Count</displayName>
 <displayInCategory>Operating System</displayInCategory>
 <dataType>integer</dataType>
-<description>Displays the number of filed audit points.</description>
+<description>Displays the number of compliance controls that failed.</description>
 <scriptContentsMac>#!/bin/sh
 ######
 # mSCP-FailedCount.sh
