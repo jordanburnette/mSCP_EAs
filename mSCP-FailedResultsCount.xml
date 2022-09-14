@@ -11,7 +11,7 @@
 # Last modified 2022.08.10 by Jordan Burnette
 # https://github.com/jordanburnette/mSCP_EAs
 ###### Description
-# Determines the failed audit points on a system
+# Displays the number of compliance controls that failed.
 ######
 
 baselineVersion=$(ls -l /Library/Preferences | /usr/bin/grep 'org.*.audit.plist' | /usr/bin/awk '{print $NF}')
