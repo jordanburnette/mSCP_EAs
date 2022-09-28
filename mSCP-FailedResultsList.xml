@@ -8,20 +8,31 @@
 ######
 # mSCP-FailedItems.sh
 # Original by Matt Woodruff @ Jamf
-# Last modified 2022.08.10 by Jordan Burnette
+# Last modified 2022.09.28 by Jordan Burnette
 # https://github.com/jordanburnette/mSCP_EAs
 ###### Description
 # Displays a list of compliance controls that failed.
 ######
 
-baselineVersion=$(/bin/ls -l /Library/Preferences | /usr/bin/grep 'org.*.audit.plist' | /usr/bin/awk '{print $NF}')
-auditfile="/Library/Preferences/${baselineVersion}"
-/usr/bin/plutil -convert xml1 "${auditfile}"
+audit=$(ls -l /Library/Preferences | /usr/bin/grep 'org.*.audit.plist' | /usr/bin/awk '{print $NF}')
 
-if [[ $(/usr/bin/grep "&lt;key&gt;finding&lt;/key&gt;" "${auditfile}" 2&gt; /dev/null) ]] ; then
-	result="$(/usr/bin/defaults read "${auditfile}" 2&gt; /dev/null | /usr/bin/grep -B3 "finding = 1" | /usr/bin/grep "{" | /usr/bin/cut -d '"' -f2)"
-else
-	result=""
+if [[ ! -z "$audit" ]]; then
+
+    count=$(echo "$audit" | wc -l | xargs)
+	if [[ "$count" == 1 ]]; then
+        auditfile="/Library/Preferences/${audit}"
+        /usr/bin/plutil -convert xml1 "${auditfile}"
+
+        if [[ $(/usr/bin/grep "<key>finding</key>" "${auditfile}" 2> /dev/null) ]] ; then
+            result="$(/usr/bin/defaults read "${auditfile}" 2> /dev/null | /usr/bin/grep -B3 "finding = 1" | /usr/bin/grep "{" | /usr/bin/cut -d '"' -f2)"
+        else
+            result=""
+        fi
+    else
+        result="Multiple Baselines Found"
+    fi
+else 
+    result="No Baseline Set"
 fi
 
 /bin/echo "&lt;result&gt;${result}&lt;/result&gt;"
