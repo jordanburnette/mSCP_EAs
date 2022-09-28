@@ -14,31 +14,41 @@
 # Displays the number of compliance controls that failed.
 ######
 
-baselineVersion=$(ls -l /Library/Preferences | /usr/bin/grep 'org.*.audit.plist' | /usr/bin/awk '{print $NF}')
+audit=$(ls -l /Library/Preferences | /usr/bin/grep 'org.*.audit.plist' | /usr/bin/awk '{print $NF}')
 
-# Get the Exemptions
-exemptfile="/Library/Managed Preferences/${baselineVersion}"
-if [[ ! -e "$exemptfile" ]];then
-    exemptfile="/Library/Preferences/${baselineVersion}"
-fi
+if [[ ! -z "$audit" ]]; then
 
-/usr/bin/plutil -convert xml1 "${exemptfile}"
+    count=$(echo "$audit" | wc -l | xargs)
+	if [[ "$count" == 1 ]]; then
+        
+        # Get the Exemptions
+        exemptfile="/Library/Managed Preferences/${audit}"
+        if [[ ! -e "$exemptfile" ]];then
+            exemptfile="/Library/Preferences/${audit}"
+        fi
 
-exempt_rules=($(/usr/bin/defaults read "${exemptfile}" 2&gt; /dev/null | /usr/bin/grep -B3 "exempt = 1" | /usr/bin/grep "{" | /usr/bin/cut -d '"' -f2 | tail -n +2))
+        /usr/bin/plutil -convert xml1 "${exemptfile}"
 
-# Get the Findings
-auditfile="/Library/Preferences/${baselineVersion}"
-/usr/bin/plutil -convert xml1 "${auditfile}"
+        exempt_rules=($(/usr/bin/defaults read "${exemptfile}" 2> /dev/null | /usr/bin/grep -B3 "exempt = 1" | /usr/bin/grep "{" | /usr/bin/cut -d '"' -f2) )
 
-findings=($(/usr/bin/defaults read "${auditfile}" 2&gt; /dev/null | /usr/bin/grep -B3 "finding = 1" | /usr/bin/grep "{" | /usr/bin/cut -d '"' -f2))
-
-# count items only in Findings
-count=0
-for finding in ${findings[@]}; do
-    if [[ ! " ${exempt_rules[*]} " =~ " ${finding} " ]] ;then
-        ((count=count+1))
+        # Get the Findings
+        auditfile="/Library/Preferences/${audit}"
+        /usr/bin/plutil -convert xml1 "${auditfile}"
+    
+        findings=($(/usr/bin/defaults read "${auditfile}" 2> /dev/null | /usr/bin/grep -B3 "finding = 1" | /usr/bin/grep "{" | /usr/bin/cut -d '"' -f2))
+        # count items only in Findings
+        count=0
+        for finding in ${findings[@]}; do
+            if [[ ! " ${exempt_rules[*]} " =~ " ${finding} " ]] ;then
+                ((count=count+1))
+            fi
+        done
+    else
+        count="-2"
     fi
-done
+else 
+    count="-1"
+fi
 
 /bin/echo "&lt;result&gt;${count}&lt;/result&gt;"
 </scriptContentsMac>
