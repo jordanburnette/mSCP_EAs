@@ -15,19 +15,28 @@
 # Determines the baseline version being used and lists out any exemptions that are deployed to the machine. 
 ######
 
-baselineVersion=$(ls -l /Library/Preferences | /usr/bin/grep 'org.*.audit.plist' | /usr/bin/awk '{print $NF}')
-
-auditFile="/Library/Managed Preferences/${baselineVersion}"
-if [[ ! -e "$auditFile" ]];then
-    auditFile="/Library/Preferences/${baselineVersion}"
-fi
-
-/usr/bin/plutil -convert xml1 "${auditFile}"
-
-if [[ $(/usr/bin/grep "&lt;key&gt;exempt&lt;/key&gt;" "${auditFile}" 2&gt; /dev/null) ]] ; then
-	result="$(/usr/bin/defaults read "${auditFile}" 2&gt; /dev/null | /usr/bin/grep -B3 "exempt = 1" | /usr/bin/grep "{" | /usr/bin/cut -d '"' -f2 | tail -n +2)"
-else
-	result=""
+audit=$(ls -l /Library/Preferences | /usr/bin/grep 'org.*.audit.plist' | /usr/bin/awk '{print $NF}')
+​
+if [[ ! -z "$audit" ]]; then
+​
+	count=$(echo "$audit" | wc -l | xargs)
+	if [[ "$count" == 1 ]]; then
+		auditFile="/Library/Managed Preferences/${audit}"
+		if [[ ! -e "$auditFile" ]];then
+				auditFile="/Library/Preferences/${audit}"	
+		fi
+		/usr/bin/plutil -convert xml1 "${auditFile}"
+​
+		if [[ $(/usr/bin/grep "<key>exempt</key>" "${auditFile}" 2> /dev/null) ]] ; then
+			result="$(/usr/bin/defaults read "${auditFile}" 2> /dev/null | /usr/bin/grep -B3 "exempt = 1" | /usr/bin/grep "{" | /usr/bin/cut -d '"' -f2)"
+		else
+			result="No Exemptions Set"
+		fi
+	else
+		result="Multiple Baselines Found"
+	fi
+else 
+	result="No Baseline Found"
 fi
 
 /bin/echo "&lt;result&gt;${result}&lt;/result&gt;"
