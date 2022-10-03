@@ -9,7 +9,7 @@
 ######
 # mSCP-BaselineExemptions.sh
 # Written by Jordan Burnette (jburnette@vcu.edu)
-# Last modified 2022.09.28 by Jordan Burnette
+# Last modified 2022.10.03 by Jordan Burnette
 # https://github.com/jordanburnette/mSCP_EAs
 ###### Description
 # Determines the baseline version being used and lists out any exemptions that are deployed to the machine. 
@@ -28,7 +28,7 @@ if [[ ! -z "$audit" ]]; then
 		/usr/bin/plutil -convert xml1 "${auditFile}"
 
 		if [[ $(/usr/bin/grep "<key>exempt</key>" "${auditFile}" 2> /dev/null) ]] ; then
-			result="$(/usr/bin/defaults read "${auditFile}" 2> /dev/null | /usr/bin/grep -B3 "exempt = 1" | /usr/bin/grep "{" | /usr/bin/cut -d '"' -f2)"
+			result="$(/usr/bin/defaults read "${auditfile}" 2> /dev/null | /usr/bin/grep -B3 "exempt = 1" | /usr/bin/grep "{" | /usr/bin/cut -d '"' -f2 | /usr/bin/tail -n +2)"
 		else
 			result="No Exemptions Set"
 		fi
