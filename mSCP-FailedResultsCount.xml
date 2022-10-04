@@ -8,7 +8,7 @@
 ######
 # mSCP-FailedCount.sh
 # Original by Matt Woodruff @ Jamf
-# Last modified 2022.09.28 by Jordan Burnette
+# Last modified 2022.10.04 by Jordan Burnette
 # https://github.com/jordanburnette/mSCP_EAs
 ###### Description
 # Displays the number of compliance controls that failed.
@@ -29,13 +29,13 @@ if [[ ! -z "$audit" ]]; then
 
         /usr/bin/plutil -convert xml1 "${exemptfile}"
 
-        exempt_rules=($(/usr/bin/defaults read "${exemptfile}" 2> /dev/null | /usr/bin/grep -B3 "exempt = 1" | /usr/bin/grep "{" | /usr/bin/cut -d '"' -f2) )
+        exempt_rules=($(/usr/bin/defaults read "${exemptfile}" 2> /dev/null | /usr/bin/grep -B3 "exempt = 1" | /usr/bin/grep "{" | /usr/bin/cut -d '"' -f2 | /usr/bin/tail -n +2))
 
         # Get the Findings
         auditfile="/Library/Preferences/${audit}"
         /usr/bin/plutil -convert xml1 "${auditfile}"
     
-        findings=($(/usr/bin/defaults read "${auditfile}" 2> /dev/null | /usr/bin/grep -B3 "finding = 1" | /usr/bin/grep "{" | /usr/bin/cut -d '"' -f2))
+        findings=($(/usr/bin/defaults read "${auditfile}" 2> /dev/null | /usr/bin/grep -B3 "finding = 1" | /usr/bin/grep "{" | /usr/bin/cut -d '"' -f2 | /usr/bin/tail -n +2))
         # count items only in Findings
         count=0
         for finding in ${findings[@]}; do
