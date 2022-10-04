@@ -15,26 +15,38 @@
 ######
 
 audit=$(ls -l /Library/Preferences | /usr/bin/grep 'org.*.audit.plist' | /usr/bin/awk '{print $NF}')
-
+FAILED_RULES=()
 if [[ ! -z "$audit" ]]; then
 
     count=$(echo "$audit" | wc -l | xargs)
 	if [[ "$count" == 1 ]]; then
         auditfile="/Library/Preferences/${audit}"
-        /usr/bin/plutil -convert xml1 "${auditfile}"
 
-        if [[ $(/usr/bin/grep "<key>finding</key>" "${auditfile}" 2> /dev/null) ]] ; then
-            result="$(/usr/bin/defaults read "${auditfile}" 2> /dev/null | /usr/bin/grep -B3 "finding = 1" | /usr/bin/grep "{" | /usr/bin/cut -d '"' -f2 | /usr/bin/tail -n +2)"
-        else
-            result=""
-        fi
+        rules=($(/usr/libexec/PlistBuddy -c "print :" "${auditfile}" | awk '/Dict/ { print $1 }'))
+        
+        for rule in ${rules[*]}; do
+            if [[ $rule == "Dict" ]]; then
+                continue
+            fi
+            FINDING=$(/usr/libexec/PlistBuddy -c "print :$rule:finding" "${auditfile}")
+            if [[ "$FINDING" == "true" ]]; then
+                FAILED_RULES+=($rule)
+            fi
+        done
+              
+
     else
-        result="Multiple Baselines Found"
+        FAILED_RULES="Multiple Baselines Found"
     fi
 else 
-    result="No Baseline Set"
+    FAILED_RULES="No Baseline Found"
 fi
 
-/bin/echo "&lt;result&gt;${result}&lt;/result&gt;"
+# sort the results
+IFS=$'\n' sorted=($(sort <<<"${FAILED_RULES[*]}")); unset IFS
+
+printf "<result>"
+printf "%s\n" "${sorted[@]}"
+printf "</result>"
 </scriptContentsMac>
 </extensionAttribute>
