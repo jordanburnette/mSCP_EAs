@@ -9,31 +9,31 @@
 ######
 # mSCP-BaselineExemptions.sh
 # Written by Jordan Burnette (jburnette@vcu.edu)
-# Last modified 2022.10.04 by Jordan Burnette
+# Last modified 2022.10.05 by Jordan Burnette
 # https://github.com/jordanburnette/mSCP_EAs
 ###### Description
 # Determines the baseline version being used and lists out any exemptions that are deployed to the machine. 
 ######
 
-audit=$(ls -l /Library/Preferences | /usr/bin/grep 'org.*.audit.plist' | /usr/bin/awk '{print $NF}')
+audit=$(/bin/ls -l /Library/Preferences | /usr/bin/grep 'org.*.audit.plist' | /usr/bin/awk '{print $NF}')
 EXEMPT_RULES=()
 
 if [[ ! -z "$audit" ]]; then
 
-    count=$(echo "$audit" | wc -l | xargs)
+    count=$(echo "$audit" | /usr/bin/wc -l | /usr/bin/xargs)
 	if [[ "$count" == 1 ]]; then
         auditfile="/Library/Managed Preferences/${audit}"
-        if [[ ! -e "$auditFile" ]];then
-                auditFile="/Library/Preferences/${audit}"
+        if [[ ! -e "$auditfile" ]];then
+                auditfile="/Library/Preferences/${audit}"
         fi
 
-        rules=($(/usr/libexec/PlistBuddy -c "print :" "${auditfile}" | awk '/Dict/ { print $1 }'))
+        rules=($(/usr/libexec/PlistBuddy -c "print :" "${auditfile}" | /usr/bin/awk '/Dict/ { print $1 }'))
         
         for rule in ${rules[*]}; do
             if [[ $rule == "Dict" ]]; then
                 continue
             fi
-            exemptions=$(/usr/libexec/PlistBuddy -c "print :$rule:exempt" "${auditfile}" 2>/dev/null)
+            exemptions=$(/usr/libexec/PlistBuddy -c "print :$rule:exempt" "${auditfile}" 2&gt;/dev/null)
             if [[ "$exemptions" == "true" ]]; then
                 EXEMPT_RULES+=($rule)
             fi
@@ -44,17 +44,17 @@ if [[ ! -z "$audit" ]]; then
         EXEMPT_RULES="Multiple Baselines Found"
     fi
 else 
-    EXEMPT_RULES="No Baseline Found"
+    EXEMPT_RULES="No Baseline Set"
 fi
     if [[ ${#EXEMPT_RULES[@]} == 0 ]]; then
-        EXEMPT_RULES="No Exemptions Found"
+        EXEMPT_RULES="No Exemptions Set"
     fi
 
 # sort the results
-IFS=$'\n' sorted=($(sort <<<"${EXEMPT_RULES[*]}")); unset IFS
+IFS=$'\n' sorted=($(/usr/bin/sort &lt;&lt;&lt;"${EXEMPT_RULES[*]}")); unset IFS
 
-printf "<result>"
+printf "&lt;result&gt;"
 printf "%s\n" "${sorted[@]}"
-printf "</result>"
+printf "&lt;/result&gt;"
 </scriptContentsMac>
 </extensionAttribute>
