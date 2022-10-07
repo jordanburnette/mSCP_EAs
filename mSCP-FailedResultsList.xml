@@ -43,10 +43,10 @@ else
 fi
 
 # sort the results
-IFS=$'\n' sorted=($(sort <<<"${FAILED_RULES[*]}")); unset IFS
+IFS=$'\n' sorted=($(sort &lt;&lt;&lt;"${FAILED_RULES[*]}")); unset IFS
 
-printf "<result>"
+printf "&lt;result&gt;"
 printf "%s\n" "${sorted[@]}"
-printf "</result>"
+printf "&lt;/result&gt;"
 </scriptContentsMac>
 </extensionAttribute>
